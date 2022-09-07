@@ -1,5 +1,7 @@
 namespace Throw;
 
+using System.Linq.Expressions;
+
 /// <summary>
 /// Extension methods for collections.
 /// </summary>
@@ -187,5 +189,29 @@ public static partial class ValidatableExtensions
             validatable.ExceptionCustomizations);
 
         return ref validatable;
+    }
+
+    /// <summary>
+    /// Throws an exception if the collection contains any element that matches the given <paramref name="predicate"/>.
+    /// Important note: if the collection is a non-evaluated expression, the expression will be evaluated.
+    /// </summary>
+    /// <param name="validatable">The validatable instance.</param>
+    /// <param name="predicate">The predicate to use to check if the collection contains any element that matches it.</param>
+    /// <typeparam name="TValue">The type of the collection.</typeparam>
+    /// <typeparam name="TElement">The type of the elements in the collection.</typeparam>
+    /// <returns>The input <paramref name="validatable"/> instance.</returns>
+    public static Validatable<TValue> IfAny<TValue, TElement>(
+        this in Validatable<TValue> validatable,
+        Expression<Func<TElement, bool>> predicate)
+        where TValue : IEnumerable<TElement?>
+        where TElement : notnull
+    {
+        Validator.ThrowIfAny(
+            validatable.Value,
+            predicate,
+            validatable.ParamName,
+            validatable.ExceptionCustomizations);
+
+        return validatable;
     }
 }

@@ -285,4 +285,28 @@ public class CollectionsTests
         action.Should().NotThrow();
         action2.Should().NotThrow();
     }
+
+    [TestMethod]
+    public void ThrowIfCollectionAny_WhenCollectionAnyElement_ShouldThrow()
+    {
+        // Arrange
+        var collection = new[] { "hey", null, "ho" };
+        var collection2 = new[] { 1, 2 };
+
+        // Act
+        Action action = () => collection.Throw().IfAny(x => x == "ho");
+        Action action2 = () => collection2.Throw().IfAny(x => x == 1);
+
+        // Assert
+        IEnumerable<ClassCleanupAttribute> something = new List<ClassCleanupAttribute>();
+
+        collection.Should().Satisfy(x => x == "ho");
+        collection2.Should().Satisfy(x => x == 1);
+
+
+        action.Should().ThrowExactly<ArgumentException>()
+            .WithMessage($"Collection should not contain any element. (Parameter '{nameof(collection)}')");
+        action2.Should().ThrowExactly<ArgumentException>()
+            .WithMessage($"Collection should not contain any element. (Parameter '{nameof(collection2)}')");
+    }
 }

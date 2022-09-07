@@ -1,5 +1,7 @@
 namespace Throw;
 
+using System.Linq.Expressions;
+
 internal static partial class Validator
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -164,5 +166,41 @@ internal static partial class Validator
             string s => s.Length,
             _ => GetEnumeratedCount(value)
         };
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static void ThrowIfAny<TValue, TElement>(
+        TValue value,
+        Expression<Func<TElement, bool>> predicate,
+        string paramName,
+        ExceptionCustomizations? exceptionCustomizations)
+        where TValue : notnull, IEnumerable<TElement?>
+        where TElement : notnull
+    {
+        if (value.Any(predicate.Compile()))
+        {
+            ExceptionThrower.Throw(
+                paramName,
+                exceptionCustomizations,
+                "Collection should not contain any elements matching this predicate.");
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static void ThrowIfAll<TValue, TElement>(
+        TValue value,
+        Expression<Func<TElement, bool>> predicate,
+        string paramName,
+        ExceptionCustomizations? exceptionCustomizations)
+        where TValue : IEnumerable<TElement?>
+        where TElement : notnull
+    {
+        if (value.All(predicate.Compile()))
+        {
+            ExceptionThrower.Throw(
+                paramName,
+                exceptionCustomizations,
+                "Collection should not have all elements match this predicate.");
+        }
     }
 }
