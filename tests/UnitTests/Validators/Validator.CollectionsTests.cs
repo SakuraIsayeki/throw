@@ -1,9 +1,11 @@
+using Xunit;
+
 namespace Throw.UnitTests.Validators;
 
-[TestClass]
+[Collection(nameof(CollectionsValidatorTests))]
 public class CollectionsValidatorTests
 {
-    [TestMethod]
+    [Fact]
     public void GetCollectionCount_WhenCollectionIsArray_ShouldReturnCollectionCount()
     {
         // Arrange
@@ -13,10 +15,10 @@ public class CollectionsValidatorTests
         var count = Validator.GetCollectionCount(collection);
 
         // Assert
-        count.Should().Be(collection.Length);
+        Assert.Equal(collection.Length, count);
     }
 
-    [TestMethod]
+    [Fact]
     public void GetCollectionCount_WhenCollectionIsList_ShouldReturnCollectionCount()
     {
         // Arrange
@@ -26,10 +28,10 @@ public class CollectionsValidatorTests
         var count = Validator.GetCollectionCount(collection);
 
         // Assert
-        count.Should().Be(collection.Count);
+        Assert.Equal(collection.Count, count);
     }
 
-    [TestMethod]
+    [Fact]
     public void GetCollectionCount_WhenCollectionIsDictionary_ShouldReturnCollectionCount()
     {
         // Arrange
@@ -39,10 +41,10 @@ public class CollectionsValidatorTests
         var count = Validator.GetCollectionCount(collection);
 
         // Assert
-        count.Should().Be(collection.Count);
+        Assert.Equal(collection.Count, count);
     }
 
-    [TestMethod]
+    [Fact]
     public void GetCollectionCount_WhenCollectionIsIEnumerable_ShouldReturnEnumeratedCount()
     {
         // Arrange
@@ -53,10 +55,10 @@ public class CollectionsValidatorTests
         var count = Validator.GetCollectionCount(collection);
 
         // Assert
-        count.Should().Be(numItems);
+        Assert.Equal(numItems, count);
     }
 
-    [TestMethod]
+    [Fact]
     public void GetCollectionCount_WhenCollectionIsString_ShouldReturnStringLength()
     {
         // Arrange
@@ -66,6 +68,6 @@ public class CollectionsValidatorTests
         var count = Validator.GetCollectionCount(str);
 
         // Assert
-        count.Should().Be(str.Length);
+        Assert.Equal(str.Length, count);
     }
 }

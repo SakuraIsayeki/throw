@@ -1,9 +1,11 @@
+using Xunit;
+
 namespace Throw.UnitTests.ValidatableMethods;
 
-[TestClass]
+[Collection(nameof(TypesTests))]
 public class TypesTests
 {
-    [TestMethod]
+    [Fact]
     public void ThrowIfType_WhenCompileTypesEqual_ShouldThrow()
     {
         // Arrange
@@ -13,12 +15,11 @@ public class TypesTests
         Action action = () => str.Throw().IfType<string>();
 
         // Assert
-        action.Should()
-            .ThrowExactly<ArgumentException>()
-            .WithMessage($"Parameter should not be of type '{str.GetType().Name}'. (Parameter '{nameof(str)}')");
+        var exception = Assert.Throws<ArgumentException>(() => action());
+        Assert.Equal($"Parameter should not be of type '{str.GetType().Name}'. (Parameter '{nameof(str)}')", exception.Message);
     }
 
-    [TestMethod]
+    [Fact]
     public void ThrowIfType_WhenRuntimeTypesEqual_ShouldThrow()
     {
         // Arrange
@@ -28,12 +29,11 @@ public class TypesTests
         Action action = () => list.Throw().IfType<List<int>>();
 
         // Assert
-        action.Should()
-            .ThrowExactly<ArgumentException>()
-            .WithMessage($"Parameter should not be of type '{list.GetType().Name}'. (Parameter '{nameof(list)}')");
+        var exception = Assert.Throws<ArgumentException>(() => action());
+        Assert.Equal($"Parameter should not be of type '{list.GetType().Name}'. (Parameter '{nameof(list)}')", exception.Message);
     }
 
-    [TestMethod]
+    [Fact]
     public void ThrowIfType_WhenCompileTimeTypeIsNotType_ShouldNotThrow()
     {
         // Arrange
@@ -43,10 +43,11 @@ public class TypesTests
         Action action2 = () => list.Throw().IfType<int>();
 
         // Assert
-        action2.Should().NotThrow();
+        var ex = Record.Exception(() => action2());
+        Assert.Null(ex);
     }
 
-    [TestMethod]
+    [Fact]
     public void ThrowIfNotType_WhenCompileTimeTypeIsNotType_ShouldThrow()
     {
         // Arrange
@@ -56,12 +57,11 @@ public class TypesTests
         Action action = () => str.Throw().IfNotType<int>();
 
         // Assert
-        action.Should()
-            .ThrowExactly<ArgumentException>()
-            .WithMessage($"Parameter should be of type '{nameof(Int32)}'. (Parameter '{nameof(str)}')");
+        var ex = Assert.Throws<ArgumentException>(() => action());
+        Assert.Equal($"Parameter should be of type '{nameof(Int32)}'. (Parameter '{nameof(str)}')", ex.Message);
     }
 
-    [TestMethod]
+    [Fact]
     public void ThrowIfNotType_WhenCompileTimeTypesEqual_ShouldNotThrow()
     {
         // Arrange
@@ -71,10 +71,11 @@ public class TypesTests
         Action action = () => list.Throw().IfNotType<List<int>>();
 
         // Assert
-        action.Should().NotThrow();
+        var ex = Record.Exception(() => action());
+        Assert.Null(ex);
     }
 
-    [TestMethod]
+    [Fact]
     public void ThrowIfNotType_WhenRuntimeTypesEquals_ShouldNotThrow()
     {
         // Arrange
@@ -84,6 +85,7 @@ public class TypesTests
         Action action = () => list.Throw().IfNotType<List<int>>();
 
         // Assert
-        action.Should().NotThrow();
+        var ex = Record.Exception(() => action());
+        Assert.Null(ex);
     }
 }
